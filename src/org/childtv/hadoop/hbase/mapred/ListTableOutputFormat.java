@@ -43,13 +43,18 @@ public class ListTableOutputFormat extends TextTableOutputFormat {
     }
 
     public Writable[] createBatchUpdates(String command, String argsString) {
-        String[] args = argsString.split(Pattern.quote(separator), -1);
+        String[] args = argsString.split(Pattern.quote(separator), 3);
         Writable bu; //= new BatchUpdate(args[0]);
         try {
             if (command.toLowerCase().equals("put")) {
             	Put put = new Put(decodeValue(args[0]) ); 
             	bu = put;
                 put(put, args);
+            }
+            else if (command.toLowerCase().equals("putcols")) {
+            	Put put = new Put(decodeValue(args[0]));
+            	bu = put;
+                putcols(put, args);
             } else if (command.toLowerCase().equals("delete")) {
             	Delete delete = new Delete(decodeValue(args[0]));
             	bu = delete;
@@ -79,6 +84,35 @@ public class ListTableOutputFormat extends TextTableOutputFormat {
         }
     }
 
+    private void putcols(Put bu, String[] args) {
+        if (args.length > 3) {
+
+            // args[2] -> tab separated qual-val pairs
+            String[] qualifierValPairs = args[2].split("\t", -1);
+
+            for(String qualVal : qualifierValPairs) {
+                String[] pair = qualVal.split(":", 2);
+                String qual = pair[0];
+                String val  = pair[1];
+
+                bu.add(decodeColumnName(args[1]), decodeColumnName(qual), getTimestampString(args[3]),  decodeValue(val));
+            }
+        }
+        else {
+            String[] names = args[1].split(":", 2);
+            // args[2] -> tab separated qual-val pairs
+            String[] qualifierValPairs = args[2].split("\t", -1);
+
+            for(String qualVal : qualifierValPairs) {
+                String[] pair = qualVal.split(":", 2);
+                String qual = pair[0];
+                String val  = pair[1];
+                
+                bu.add(decodeColumnName(args[1]), decodeColumnName(qual), new Date().getTime(),  decodeValue(val));
+            }
+        }
+    }
+
     private void delete(Delete bu, String[] args) {
         if (args.length > 2) { 
             String[] names = args[1].split(":", 2);
@@ -95,7 +129,7 @@ public class ListTableOutputFormat extends TextTableOutputFormat {
         try {
             return Long.parseLong(ts);
         } catch(NumberFormatException e) {
-        	return new Date().getTime(); // TODO CHECK THAT THIS IS DEFAULT BEHAVIOR
+            return new Date().getTime(); // TODO CHECK THAT THIS IS DEFAULT BEHAVIOR
         }
         
     }

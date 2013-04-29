@@ -18,6 +18,8 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapred.TableInputFormat;
 import org.apache.hadoop.hbase.util.Base64;
+import org.apache.hadoop.hbase.util.Bytes;
+
 
 public abstract class TextTableInputFormat
     implements InputFormat<Text, Text>, JobConfigurable {
@@ -30,6 +32,8 @@ public abstract class TextTableInputFormat
     protected TableInputFormat inputFormat;
     private boolean hasTimestamp;
     private boolean isBinary;
+    private boolean scan = true;
+
 
     public TextTableInputFormat() {
         inputFormat = new TableInputFormat();
