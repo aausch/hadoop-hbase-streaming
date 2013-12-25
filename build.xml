@@ -6,18 +6,23 @@
 
   <path id="classpath">
     <pathelement location="classes"/>
-    <pathelement location="${env.HADOOP_HOME}/hadoop-common.jar"/>
     <pathelement location="${env.HADOOP_HOME}/conf"/>
-    <pathelement location="${env.HBASE_HOME}/hbase.jar"/>
     <pathelement location="${env.HBASE_HOME}/conf"/>
-    <pathelement location="${env.HADOOP_MAPREDUCE_HOME}/hadoop-core.jar"/>
-    <fileset dir="${env.HADOOP_MAPREDUCE_HOME}/lib">
-      <include name="**/*.jar" />
+    <fileset dir="${env.HADOOP_HOME}">
+      <include name="*.jar" />
     </fileset>
     <fileset dir="${env.HADOOP_HOME}/lib">
       <include name="**/*.jar" />
     </fileset>
-    <pathelement location="${env.HADOOP_MAPREDUCE_HOME}/contrib/streaming/hadoop-streaming.jar"/>
+    <fileset dir="${env.HBASE_HOME}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${env.HBASE_HOME}/lib">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${env.HADOOP_HOME}/contrib/streaming/">
+      <include name="**/*.jar" />
+    </fileset>
   </path>
 
   <target name="init">
